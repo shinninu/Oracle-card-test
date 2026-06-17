@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>二つの世界と人</title>
+<style>
+body{margin:0;background:#0b0b0f;color:#e8d9a8;font-family:sans-serif;padding:20px;max-width:800px;margin:auto}
+h1{text-align:center}
+.sub{text-align:center;color:#b9ab7a}
+button{padding:12px 18px;margin:6px;border:1px solid #e8d9a8;background:#16161d;color:#e8d9a8;border-radius:8px}
+.card{background:#16161d;padding:16px;margin:12px 0;border-radius:10px;border:1px solid #444}
+.type{font-size:.9em;opacity:.8}
+.name{font-size:1.4em;font-weight:bold}
+.msg{margin-top:10px;line-height:1.8}
+</style>
+</head>
+<body>
+<h1>二つの世界と人</h1>
+<div class="sub">Nature · Structure · Human</div>
+
+<div style="text-align:center">
+<button onclick="drawOne()">1枚引き</button>
+<button onclick="drawThree()">三世界引き</button>
+</div>
+
+<div id="result"></div>
+
+<script>
+const CARDS=[
+{type:"自然",name:"天",msg:"人の願いとは無関係に空は広がる。永遠を思い出せ。"},
+{type:"自然",name:"地",msg:"理想の前に足元を見よ。今日を生きる場所はここだ。"},
+{type:"自然",name:"風",msg:"変わることが自然である。去るものを追うな。"},
+{type:"自然",name:"水",msg:"柔らかさは弱さではない。"},
+{type:"自然",name:"雷",msg:"変化は予告なく訪れる。"},
+{type:"自然",name:"光",msg:"真実を見る勇気を持て。"},
+{type:"自然",name:"闇",msg:"答えのない時間を恐れるな。"},
+{type:"自然",name:"星",msg:"意味より先に存在がある。"},
+
+{type:"構造",name:"名前",msg:"名前は本質ではない。"},
+{type:"構造",name:"境界",msg:"どこまでが自分かを知れ。"},
+{type:"構造",name:"時間",msg:"構造は現実の力を持つ。"},
+{type:"構造",name:"物語",msg:"信じる物語が世界を形作る。"},
+{type:"構造",name:"役割",msg:"仮面と自分を混同するな。"},
+{type:"構造",name:"約束",msg:"社会は約束の積み重ねで動く。"},
+{type:"構造",name:"評価",msg:"挑戦は誰にでも開かれている。"},
+{type:"構造",name:"祭り",msg:"特別な時間が日常を照らす。"},
+
+{type:"人",name:"一歩",msg:"動いた先で答えが現れる。"},
+{type:"人",name:"記録",msg:"未来の自分への手紙を書け。"},
+{type:"人",name:"対話",msg:"まず理解しようとしてみる。"},
+{type:"人",name:"整理",msg:"ひとつ手放せ。"},
+{type:"人",name:"観察",msg:"今日は解釈をやめる。"},
+{type:"人",name:"選択",msg:"意識して選べ。"},
+{type:"人",name:"休息",msg:"休むことも行動である。"},
+{type:"人",name:"試す",msg:"予測をやめ、小さく試せ。"}
+];
+
+function rand(arr){return arr[Math.floor(Math.random()*arr.length)]}
+
+function render(cards){
+document.getElementById("result").innerHTML=cards.map(c=>`
+<div class="card">
+<div class="type">${c.type}</div>
+<div class="name">${c.name}</div>
+<div class="msg">${c.msg}</div>
+</div>`).join("");
+}
+
+function drawOne(){
+render([rand(CARDS)]);
+}
+
+function drawThree(){
+render([
+rand(CARDS.filter(c=>c.type==="自然")),
+rand(CARDS.filter(c=>c.type==="構造")),
+rand(CARDS.filter(c=>c.type==="人"))
+]);
+}
+</script>
+</body>
+</html>
