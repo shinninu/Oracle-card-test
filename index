@@ -1,10 +1,488 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>二つの世界 — Oracle</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Noto+Serif+JP:wght@300;400;500&display=swap');
+:root {
+  --cosmos:#060914; --gold:#D4AF5A; --gold-dim:#6A5020;
+  --moss:#4A6A3A; --violet:#5A2A80; --violet-lt:#9A70C0;
+  --steel:#A0B8D0; --earth:#3A2A10;
+  --text:#E8E0D0; --text-dim:#706850; --text-soft:#C0B8A8;
+  --col-n0:#080E14; --col-n1:#0A1A10;
+  --col-s0:#0E1020; --col-s1:#1A2010;
+  --col-a0:#140820; --col-a1:#201010;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--cosmos);color:var(--text);font-family:'Noto Serif JP',serif;min-height:100vh;overflow-x:hidden;}
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%,rgba(90,42,128,.2) 0%,transparent 70%),
+    radial-gradient(ellipse 60% 30% at 50% 100%,rgba(14,26,14,.8) 0%,transparent 60%),
+    radial-gradient(1.5px 1.5px at 8% 12%,rgba(212,175,90,.9) 0%,transparent 100%),
+    radial-gradient(1px 1px at 20% 5%,rgba(255,255,255,.6) 0%,transparent 100%),
+    radial-gradient(1px 1px at 35% 18%,rgba(168,180,192,.5) 0%,transparent 100%),
+    radial-gradient(2px 2px at 48% 8%,rgba(212,175,90,.7) 0%,transparent 100%),
+    radial-gradient(1px 1px at 60% 22%,rgba(255,255,255,.5) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 72% 7%,rgba(212,175,90,.8) 0%,transparent 100%),
+    radial-gradient(1px 1px at 85% 15%,rgba(255,255,255,.5) 0%,transparent 100%),
+    radial-gradient(1px 1px at 15% 38%,rgba(255,255,255,.3) 0%,transparent 100%),
+    radial-gradient(1px 1px at 55% 42%,rgba(212,175,90,.35) 0%,transparent 100%);}
+
+.wrapper{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:2.5rem 1.2rem 5rem;}
+
+/* Header */
+header{text-align:center;margin-bottom:2rem;}
+.logo-svg{width:68px;height:68px;margin:0 auto 1.2rem;display:block;}
+header h1{font-family:'Cinzel',serif;font-size:clamp(1.3rem,4vw,2rem);font-weight:400;color:var(--gold);letter-spacing:.2em;text-shadow:0 0 40px rgba(212,175,90,.35);}
+.subtitle{font-size:.7rem;color:var(--text-dim);letter-spacing:.3em;margin-top:.4rem;font-weight:300;}
+
+/* Deck selector */
+.deck-selector{display:flex;gap:0;justify-content:center;margin:1.8rem auto;max-width:480px;border:1px solid rgba(212,175,90,.2);border-radius:3px;overflow:hidden;}
+.deck-btn{flex:1;padding:.7rem .5rem;background:transparent;border:none;border-right:1px solid rgba(212,175,90,.12);color:var(--text-dim);font-family:'Noto Serif JP',serif;font-size:.78rem;cursor:pointer;transition:all .25s;letter-spacing:.05em;font-weight:300;}
+.deck-btn:last-child{border-right:none;}
+.deck-btn:hover{color:var(--text);}
+.deck-btn.active-n{background:rgba(10,40,15,.6);color:#80B070;border-bottom:2px solid #80B070;}
+.deck-btn.active-s{background:rgba(20,30,55,.6);color:var(--steel);border-bottom:2px solid var(--steel);}
+.deck-btn.active-a{background:rgba(35,15,50,.6);color:var(--violet-lt);border-bottom:2px solid var(--violet-lt);}
+.deck-btn.active-all{background:rgba(35,25,10,.6);color:var(--gold);border-bottom:2px solid var(--gold);}
+
+/* Draw mode */
+.draw-modes{display:flex;gap:.6rem;justify-content:center;margin-bottom:1.6rem;flex-wrap:wrap;}
+.mode-btn{background:transparent;border:1px solid var(--gold-dim);color:var(--text-dim);font-family:'Cinzel',serif;font-size:.65rem;padding:.38rem .9rem;border-radius:2px;cursor:pointer;transition:all .2s;letter-spacing:.1em;}
+.mode-btn.active,.mode-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(212,175,90,.07);}
+.mode-desc{text-align:center;font-size:.7rem;color:var(--text-dim);margin-bottom:1.4rem;font-weight:300;letter-spacing:.04em;min-height:1.2em;}
+
+/* Draw button */
+.draw-btn{display:block;margin:0 auto 2rem;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'Cinzel',serif;font-size:.85rem;padding:.8rem 2.8rem;border-radius:2px;cursor:pointer;letter-spacing:.2em;transition:all .3s;position:relative;overflow:hidden;}
+.draw-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(212,175,90,.1),transparent);transform:translateX(-100%);transition:transform .5s;}
+.draw-btn:hover{box-shadow:0 0 25px rgba(212,175,90,.18);}
+.draw-btn:hover::after{transform:translateX(100%);}
+
+/* Divider */
+.divider{display:flex;align-items:center;gap:.8rem;max-width:260px;margin:0 auto 1.6rem;}
+.div-line{flex:1;height:1px;}
+.div-line.l{background:linear-gradient(90deg,transparent,rgba(212,175,90,.3));}
+.div-line.r{background:linear-gradient(90deg,rgba(212,175,90,.3),transparent);}
+.div-diamond{width:5px;height:5px;border:1px solid var(--gold-dim);transform:rotate(45deg);flex-shrink:0;}
+
+/* Stage */
+.stage-wrap{min-height:260px;}
+
+/* Pyramid layout */
+.pyramid{display:flex;flex-direction:column;align-items:center;gap:.8rem;}
+.pyr-row{display:flex;gap:.8rem;justify-content:center;}
+
+/* Normal layout */
+.stage{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;align-items:flex-start;perspective:1400px;}
+
+/* Card */
+.card-wrapper{width:165px;animation:rise .55s cubic-bezier(.2,.8,.3,1) both;}
+.card-wrapper.sm{width:145px;}
+@keyframes rise{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+.card-inner{position:relative;width:165px;height:275px;transform-style:preserve-3d;transition:transform .85s cubic-bezier(.4,0,.2,1);cursor:pointer;}
+.card-wrapper.sm .card-inner{width:145px;height:242px;}
+.card-wrapper.flipped .card-inner{transform:rotateY(180deg);}
+.card-face{position:absolute;inset:0;border-radius:9px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;}
+
+/* Card back */
+.card-back{background:linear-gradient(160deg,#0C1020 0%,#10101C 50%,#0A0E14 100%);border:1px solid rgba(212,175,90,.28);box-shadow:0 12px 50px rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;}
+
+/* Card front */
+.card-front{transform:rotateY(180deg);border:1px solid rgba(212,175,90,.22);box-shadow:0 12px 50px rgba(0,0,0,.75);display:flex;flex-direction:column;}
+.card-front.n{background:linear-gradient(160deg,var(--col-n0) 0%,#0C2010 55%,var(--col-n1) 100%);}
+.card-front.s{background:linear-gradient(160deg,var(--col-s0) 0%,#182030 55%,var(--col-s1) 100%);}
+.card-front.a{background:linear-gradient(160deg,var(--col-a0) 0%,#1C0C28 55%,var(--col-a1) 100%);}
+
+.card-art{flex:1;display:flex;align-items:center;justify-content:center;}
+.card-sep{height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,90,.22),transparent);margin:0 .9rem;}
+.card-name{font-family:'Cinzel',serif;font-size:.62rem;color:var(--gold);text-align:center;padding:.5rem .4rem .12rem;letter-spacing:.12em;}
+.card-en{font-family:'Cinzel',serif;font-size:.48rem;color:var(--text-dim);text-align:center;letter-spacing:.14em;padding-bottom:.2rem;}
+.card-type{font-size:.58rem;text-align:center;padding:.25rem .4rem .5rem;font-weight:300;letter-spacing:.04em;border-top:1px solid rgba(212,175,90,.1);}
+.card-type.n{color:#6A9A5A;}
+.card-type.s{color:#7A9AB0;}
+.card-type.a{color:#8A70B0;}
+
+/* Tap hint */
+.tap-hint{text-align:center;font-size:.7rem;color:var(--text-dim);margin-top:.8rem;opacity:0;transition:opacity .5s;font-weight:300;letter-spacing:.06em;}
+.tap-hint.on{opacity:1;}
+
+/* Message panel */
+.msg-panel{max-width:680px;margin:2rem auto 0;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .5s .1s,transform .5s .1s;}
+.msg-panel.on{opacity:1;pointer-events:auto;transform:none;}
+.msg-card{background:rgba(8,12,30,.7);border:1px solid rgba(212,175,90,.14);border-radius:6px;padding:1.4rem 1.6rem;margin-bottom:.8rem;backdrop-filter:blur(6px);animation:rise .4s ease both;}
+.msg-head{display:flex;align-items:center;gap:.7rem;padding-bottom:.7rem;margin-bottom:1rem;border-bottom:1px solid rgba(212,175,90,.1);}
+.msg-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.msg-dot.n{background:#80B070;}
+.msg-dot.s{background:var(--steel);}
+.msg-dot.a{background:var(--violet-lt);}
+.msg-title{font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold);letter-spacing:.1em;}
+.msg-type{font-size:.6rem;color:var(--text-dim);margin-left:auto;}
+.msg-body{font-size:.88rem;line-height:2;font-weight:300;color:var(--text-soft);}
+.msg-body em{font-style:italic;color:var(--text);font-weight:400;}
+.msg-body.a-body{
+  font-size:.9rem;line-height:2;color:var(--text);
+  padding:.9rem 1.1rem;
+  background:rgba(212,175,90,.05);
+  border-left:2px solid var(--gold);
+  border-radius:0 4px 4px 0;
+  margin-top:.3rem;
+}
+
+/* Reset */
+.reset-btn{display:none;margin:1.5rem auto 0;background:transparent;border:1px solid var(--gold-dim);color:var(--text-dim);font-family:'Noto Serif JP',serif;font-size:.75rem;padding:.45rem 1.6rem;border-radius:2px;cursor:pointer;transition:all .2s;letter-spacing:.1em;}
+.reset-btn:hover{border-color:var(--gold);color:var(--gold);}
+.reset-btn.on{display:block;}
+
+footer{text-align:center;margin-top:4rem;font-size:.65rem;color:var(--text-dim);font-weight:300;line-height:2;}
+footer code{font-family:monospace;color:var(--gold-dim);}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="wrapper">
+
+<header>
+  <svg class="logo-svg" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="36" cy="36" r="33" fill="none" stroke="#D4AF5A" stroke-width=".6" opacity=".4"/>
+    <circle cx="36" cy="36" r="22" fill="none" stroke="#5A2A80" stroke-width=".5" opacity=".5"/>
+    <polygon points="36,7 61,50 11,50" fill="none" stroke="#D4AF5A" stroke-width=".8" opacity=".65"/>
+    <polygon points="36,65 11,22 61,22" fill="none" stroke="#4A6A3A" stroke-width=".8" opacity=".6"/>
+    <circle cx="36" cy="36" r="5" fill="none" stroke="#D4AF5A" stroke-width=".6" opacity=".5"/>
+    <circle cx="36" cy="36" r="2" fill="#D4AF5A" opacity=".9"/>
+    <circle cx="36" cy="4"  r="1.4" fill="#D4AF5A" opacity=".7"/>
+    <circle cx="36" cy="68" r="1.4" fill="#4A6A3A" opacity=".7"/>
+    <circle cx="64" cy="50" r="1.4" fill="#D4AF5A" opacity=".6"/>
+    <circle cx="8"  cy="50" r="1.4" fill="#D4AF5A" opacity=".6"/>
+    <circle cx="64" cy="22" r="1.4" fill="#4A6A3A" opacity=".6"/>
+    <circle cx="8"  cy="22" r="1.4" fill="#4A6A3A" opacity=".6"/>
+  </svg>
+  <h1>二つの世界</h1>
+  <p class="subtitle">THE TWO WORLDS &middot; ORACLE</p>
+</header>
+
+<div class="divider"><div class="div-line l"></div><div class="div-diamond"></div><div class="div-line r"></div></div>
+
+<!-- Deck selector (1枚引き時のみ有効) -->
+<div class="deck-selector" id="deckSelector">
+  <button class="deck-btn active-n" data-deck="n">&#x1F33F; 自然</button>
+  <button class="deck-btn" data-deck="s">&#x1F3DB; 構造</button>
+  <button class="deck-btn" data-deck="a">&#x26A1; 行動</button>
+  <button class="deck-btn" data-deck="all">&#x2606; すべて</button>
+</div>
+
+<!-- Draw mode -->
+<div class="draw-modes">
+  <button class="mode-btn active" data-mode="1">I　1枚</button>
+  <button class="mode-btn" data-mode="3">III　3枚</button>
+  <button class="mode-btn" data-mode="6">VI　ピラミッド</button>
+</div>
+<p class="mode-desc" id="modeDesc">好きなデッキを選んで引く</p>
+
+<button class="draw-btn" id="drawBtn">カードを引く</button>
+
+<div class="stage-wrap" id="stageWrap">
+  <div class="stage" id="stage"></div>
+</div>
+<p class="tap-hint" id="tapHint">カードに触れて、メッセージを開く</p>
+<div class="msg-panel" id="msgPanel"></div>
+<button class="reset-btn" id="resetBtn">もう一度引く</button>
+
+<footer>
+  <p><code>CARDS</code> 配列を編集してカスタマイズできます &nbsp;|&nbsp; Two Worlds Oracle &middot; Private Edition</p>
+</footer>
+</div>
+
+<script>
+/* =============================================================
+   CARDS
+   type: "n"=自然  "s"=構造  "a"=行動
+   msg: 自然→宇宙・自然の視点 / 構造→社会・人間の視点 / 行動→動くための言葉
+============================================================= */
 const CARDS = [
-  {
-    name: "カード名",        // 表示名（短く）
-    emoji: "🌙",            // シンボル絵文字
-    color: ["#0A1A3D", "#1A3A6E"],  // グラデーション2色
-    keyword: "直感 · 神秘",  // サブキーワード
-    message: "占いのメッセージ文"
-  },
-  // ... 続けて追加
+  /* 🌿 自然 */
+  {type:"n",name:"光",en:"LIGHT",
+   msg:"光は目的を持って生まれない。ただそこに在るだけで、空間は変わる。あなたが今ここに在ること自体が、すでに何かを照らしている。"},
+  {type:"n",name:"闇",en:"DARKNESS",
+   msg:"闇は光の不在ではない。闇には闇自身の密度がある。種は暗い土の中でしか発芽しない。見えない時間が、見える未来を作っている。"},
+  {type:"n",name:"流れ",en:"FLOW",
+   msg:"水は行き先を知らない。ただ低いところへ向かう性質があるだけだ。それでも、必ず海に着く。方向は意志ではなく、本質から生まれる。"},
+  {type:"n",name:"循環",en:"CYCLE",
+   msg:"宇宙に直線はない。すべては弧を描き、戻り、また離れる。終わりに見えるものは、次の始まりが形を変えて現れているだけだ。"},
+  {type:"n",name:"根",en:"ROOT",
+   msg:"大木の根は、幹の何倍もの距離を地下で旅している。誰にも見えない場所で張られた根が、嵐の日に木を立たせる。深さは、高さより先に必要だ。"},
+  {type:"n",name:"空白",en:"VOID",
+   msg:"宇宙の大半は何もない。その空白があるから、星は星として存在できる。満たされていない空間こそが、次に来るものの住処だ。"},
+  {type:"n",name:"螺旋",en:"SPIRAL",
+   msg:"自然は直線で成長しない。貝も、銀河も、嵐も、螺旋を描く。同じ場所に戻ってきたように見えて、一層高い場所にいる。それが成長の本当の形だ。"},
+  {type:"n",name:"溶解",en:"DISSOLUTION",
+   msg:"固体は溶けて液体になり、液体は蒸発して気体になる。形を失うことは消滅ではない。より自由な状態へ移行する過程だ。溶けているとき、何かが次の形を準備している。"},
+  {type:"n",name:"未言語",en:"PRE-WORD",
+   msg:"言葉が生まれる前に、感覚がある。名前をつけた瞬間、その体験は固定される。まだ言葉になっていないものの中に、最もなまの真実が宿っている。"},
+  {type:"n",name:"無意識",en:"UNCONSCIOUS",
+   msg:"海面に見えているのは、氷山のほんの一角だ。あなたの判断、選択、感情の多くは、自分でも知らない深海から浮かび上がってくる。意識は無意識の出口に過ぎない。"},
+  {type:"n",name:"鏡",en:"MIRROR",
+   msg:"強く惹かれる相手は、自分の中にある何かを映している。反発する相手もまた、同じだ。外の世界はすべて、内側を映す鏡として機能している。あなたが見ているのは、常に自分自身だ。"},
+  {type:"n",name:"断片",en:"FRAGMENT",
+   msg:"砕けたものは失われたのではない。全体だったものが、より小さな真実になって散らばっている。断片の一つひとつに、元の形の記憶が宿っている。"},
+  {type:"n",name:"実像",en:"REAL IMAGE",
+   msg:"鏡に映る像は左右が逆だ。他者の目に映る自分も、完全ではない。肉体を持ち、この地を踏んで立っている存在——それだけが、誰にも歪められない本当のあなただ。"},
+
+  /* 🏛 構造 */
+  {type:"s",name:"役割",en:"ROLE",
+   msg:"社会は役割の網の目でできている。誰もが何かを担い、誰かの担いに乗っかって生きている。役割はあなたを縛るラベルではなく、今この場所で力を発揮するための形だ。"},
+  {type:"s",name:"責任",en:"RESPONSIBILITY",
+   msg:"責任を引き受けた瞬間、その人はその場所の主人になる。重さは本物だ。しかしその重さこそが、あなたがそこに本当にいる証でもある。逃げた場所には、影響力も残らない。"},
+  {type:"s",name:"秩序",en:"ORDER",
+   msg:"人間は混沌に耐えられないから、秩序を作った。法律、慣習、時間割、通貨——すべて人間が合意した幻想だ。しかしその幻想の上に、億の人の生活が成り立っている。"},
+  {type:"s",name:"境界",en:"BOUNDARY",
+   msg:"国境も、法律も、契約も、人間が引いた線だ。自然界にはない。しかし線があるから、内側と外側が生まれ、責任と自由の範囲が定まる。境界は分断ではなく、関係を可能にする条件だ。"},
+  {type:"s",name:"継承",en:"LEGACY",
+   msg:"文明とは、死んだ人間の知恵を生きている人間が使う仕組みだ。あなたが今当然のように使っている言語、技術、制度は、会ったこともない誰かが命をかけて作ったものだ。"},
+  {type:"s",name:"積み重ね",en:"ACCUMULATION",
+   msg:"歴史は繰り返すと言われるが、正確には螺旋を描く。同じように見えて、人類は少しずつ何かを学んで次へ進んでいる。今日の一日も、その螺旋の一段だ。"},
+  {type:"s",name:"停滞",en:"STAGNATION",
+   msg:"動いていないように見える社会も、内側では何かが蓄積されている。変化の前には必ず停滞がある。停滞は終わりではなく、次の動きのためのエネルギーが満ちていく時間だ。"},
+  {type:"s",name:"混沌",en:"CHAOS",
+   msg:"すべての秩序は、一度混沌から生まれた。革命の後、戦争の後、喪失の後——新しい構造はいつも、古い秩序が崩れた場所から立ち上がる。混沌を恐れるな。それは創造の前夜だ。"},
+  {type:"s",name:"拡大",en:"EXPANSION",
+   msg:"帝国は拡大し、市場は拡大し、知識は拡大する。拡大はエネルギーが外へ向かう時に起きる。しかし拡大には必ず、それを支える構造が必要だ。根なき拡大は、やがて自重で崩れる。"},
+  {type:"s",name:"縮小",en:"CONTRACTION",
+   msg:"縮小を失敗と呼ぶのは、拡大だけを成長と見ているからだ。木は冬に縮む。会社も、国も、人も、縮む時期がある。縮小は集中だ。力を一点に絞る、意図的な選択でもある。"},
+  {type:"s",name:"物語",en:"STORY",
+   msg:"人間は唯一、物語によって見知らぬ他者と協力できる動物だ。国家も宗教も貨幣も、共有された物語だ。あなたが信じている物語が、あなたの見る世界の形を決めている。"},
+
+  /* ⚡ 行動 */
+  {type:"a",name:"選択",en:"CHOICE",
+   msg:"迷っていることを紙に書き出す。「どちらでもいい」と一度声に出してから、直感で選ぶ。選んだ後は振り返らない。どの道を選ぶかより、選んだ道をどう歩くかが人生を作る。"},
+  {type:"a",name:"変革",en:"REVOLUTION",
+   msg:"「おかしい」と思っていることに、今日初めて声を出す。一言でいい。署名でも、発言でも、書くことでも。社会は動いた人間の軌跡でできている。嘆くより動け。"},
+  {type:"a",name:"熱",en:"HEAT",
+   msg:"今、自分の中で燃えているものを一つ特定する。それが怒りでも、欲でも、執着でも、否定しない。その熱をエネルギーとして、一つの具体的な行動に変換する。熱は方向を与えれば力になる。"},
+  {type:"a",name:"凍結",en:"FREEZE",
+   msg:"動けない時、無理に動こうとしない。その代わり、何が自分を凍らせているかを一つだけ書く。名前をつけると、少し溶け始める。凍結は抵抗ではなく、サインだ。"},
+  {type:"a",name:"通過",en:"PASSAGE",
+   msg:"今「溶けている」「壊れている」と感じるなら、それを書き留める。日付と一言だけでいい。通過儀礼は痛い。しかし後で読み返した時、あれが転換点だったとわかる。"},
+  {type:"a",name:"閾値",en:"THRESHOLD",
+   msg:"ずっと「準備中」にしていることを一つ特定する。十分な準備が整う日は来ない。今の自分のまま、未完成のまま、一歩だけ踏み出す。扉は開けてみないと、その先が見えない。"},
+  {type:"a",name:"祈り",en:"PRAYER",
+   msg:"自分の願いを一文だけ書く。誰かに見せなくていい。ただ、言葉にする。意図を持って言葉にした瞬間、人間は行動の方向を定め始める。祈りは最も古い目標設定だ。"},
+  {type:"a",name:"対話",en:"DIALOGUE",
+   msg:"今日、誰かの話を反論せず最後まで聞く。ただそれだけをやる。本当の対話は説得ではなく、わかろうとする行為だ。相手の世界に一度だけ、完全に入ってみる。"},
+  {type:"a",name:"今",en:"NOW",
+   msg:"このカードを引いた瞬間から5分以内に、ずっとやろうと思っていた何かを始める。過去の分析も未来の計画も、最終的には今ここで何をするかに帰着する。"},
+  {type:"a",name:"忘却",en:"FORGETTING",
+   msg:"手放したいのに手放せないものを一つ書く。そして意図的に忘れる許可を自分に出す。忘れることは裏切りではない。新しいものが入るための、意識的な空白の作り方だ。"},
+  {type:"a",name:"沈黙",en:"SILENCE",
+   msg:"今日、意図的に黙る場面を一つ作る。言いたいことがあっても、一度飲み込む。言葉を発しないことで見えてくるものがある。沈黙は行動の放棄ではなく、最も強い選択の一つだ。"},
+  {type:"a",name:"祭り",en:"FESTIVAL",
+   msg:"近いうちに「特別な日」を一つ自分で設定する。理由はなくていい。日常に意図的な非日常を差し込むことで、普通の日の密度が変わる。人生の中に、自分だけの祭りを設計せよ。"},
+  {type:"a",name:"日常",en:"EVERYDAY",
+   msg:"今日の、何でもない一つの行動を、いつもより丁寧にやる。食事でも、歩くことでも、人と話すことでも。日常はケの世界だ。その積み重ねが、人生のほとんどを作っている。"},
 ];
+
+const TYPE_META = {
+  n:{label:"自然", color:"#80B070"},
+  s:{label:"構造", color:"#A0B8D0"},
+  a:{label:"行動", color:"#9A70C0"},
+};
+
+/* SVGs */
+function backSVG(sm){
+  const s=sm?90:105;
+  return`<svg viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}">
+    <circle cx="55" cy="55" r="50" fill="none" stroke="#D4AF5A" stroke-width=".6" opacity=".28"/>
+    <circle cx="55" cy="55" r="34" fill="none" stroke="#5A2A80" stroke-width=".5" opacity=".38"/>
+    <circle cx="55" cy="55" r="19" fill="none" stroke="#D4AF5A" stroke-width=".45" opacity=".28"/>
+    <polygon points="55,8 95,72 15,72" fill="none" stroke="#D4AF5A" stroke-width=".7" opacity=".52"/>
+    <polygon points="55,100 15,36 95,36" fill="none" stroke="#4A6A3A" stroke-width=".7" opacity=".48"/>
+    <circle cx="55" cy="8"   r="1.4" fill="#D4AF5A" opacity=".65"/>
+    <circle cx="95" cy="72"  r="1.4" fill="#D4AF5A" opacity=".65"/>
+    <circle cx="15" cy="72"  r="1.4" fill="#D4AF5A" opacity=".65"/>
+    <circle cx="55" cy="100" r="1.4" fill="#4A6A3A" opacity=".65"/>
+    <circle cx="15" cy="36"  r="1.4" fill="#4A6A3A" opacity=".65"/>
+    <circle cx="95" cy="36"  r="1.4" fill="#4A6A3A" opacity=".65"/>
+    <line x1="5" y1="55" x2="105" y2="55" stroke="#D4AF5A" stroke-width=".3" opacity=".15"/>
+    <line x1="55" y1="5" x2="55" y2="105" stroke="#D4AF5A" stroke-width=".3" opacity=".15"/>
+    <circle cx="55" cy="55" r="5"  fill="none" stroke="#D4AF5A" stroke-width=".55" opacity=".52"/>
+    <circle cx="55" cy="55" r="2"  fill="#D4AF5A" opacity=".82"/>
+  </svg>`;
+}
+
+function frontSVG(type, sm){
+  const s=sm?60:68;
+  if(type==="n") return`<svg viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}">
+    <circle cx="36" cy="36" r="30" fill="none" stroke="#4A6A3A" stroke-width=".6" opacity=".42"/>
+    <circle cx="36" cy="36" r="18" fill="none" stroke="#80B070" stroke-width=".5" opacity=".42"/>
+    <circle cx="36" cy="36" r="9"  fill="none" stroke="#D4AF5A" stroke-width=".42" opacity=".38"/>
+    <circle cx="36" cy="18"  r="9" fill="none" stroke="#4A6A3A" stroke-width=".42" opacity=".32"/>
+    <circle cx="53.6" cy="27" r="9" fill="none" stroke="#4A6A3A" stroke-width=".42" opacity=".32"/>
+    <circle cx="53.6" cy="45" r="9" fill="none" stroke="#4A6A3A" stroke-width=".42" opacity=".32"/>
+    <circle cx="36" cy="54"  r="9" fill="none" stroke="#4A6A3A" stroke-width=".42" opacity=".32"/>
+    <circle cx="18.4" cy="45" r="9" fill="none" stroke="#4A6A3A" stroke-width=".42" opacity=".32"/>
+    <circle cx="18.4" cy="27" r="9" fill="none" stroke="#4A6A3A" stroke-width=".42" opacity=".32"/>
+    <circle cx="36" cy="36" r="2" fill="#80B070" opacity=".82"/>
+  </svg>`;
+  if(type==="s") return`<svg viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}">
+    <rect x="8"  y="8"  width="56" height="56" fill="none" stroke="#A0B8D0" stroke-width=".6" opacity=".42"/>
+    <rect x="18" y="18" width="36" height="36" fill="none" stroke="#D4AF5A" stroke-width=".52" opacity=".38" transform="rotate(45 36 36)"/>
+    <rect x="24" y="24" width="24" height="24" fill="none" stroke="#A0B8D0" stroke-width=".48" opacity=".32"/>
+    <line x1="8"  y1="8"  x2="64" y2="64" stroke="#A0B8D0" stroke-width=".3" opacity=".16"/>
+    <line x1="64" y1="8"  x2="8"  y2="64" stroke="#A0B8D0" stroke-width=".3" opacity=".16"/>
+    <circle cx="36" cy="36" r="4"   fill="none" stroke="#D4AF5A" stroke-width=".55" opacity=".58"/>
+    <circle cx="36" cy="36" r="1.5" fill="#D4AF5A" opacity=".82"/>
+  </svg>`;
+  return`<svg viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}">
+    <circle cx="36" cy="36" r="30" fill="none" stroke="#5A2A80" stroke-width=".5" opacity=".32"/>
+    <polygon points="36,7 62,52 10,52"  fill="none" stroke="#D4AF5A"   stroke-width=".7" opacity=".58"/>
+    <polygon points="36,65 10,20 62,20" fill="none" stroke="#9A70C0" stroke-width=".7" opacity=".52"/>
+    <circle cx="36" cy="36" r="10" fill="none" stroke="#D4AF5A" stroke-width=".42" opacity=".32"/>
+    <circle cx="36" cy="36" r="4"  fill="none" stroke="#9A70C0" stroke-width=".52" opacity=".48"/>
+    <circle cx="36" cy="36" r="2"  fill="#D4AF5A" opacity=".88"/>
+  </svg>`;
+}
+
+/* State */
+let selectedDeck = "n";
+let drawMode = 1;
+
+/* Deck buttons */
+document.querySelectorAll('.deck-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.deck-btn').forEach(b => b.className='deck-btn');
+    btn.classList.add('active-'+btn.dataset.deck);
+    selectedDeck = btn.dataset.deck;
+  });
+});
+
+/* Mode buttons */
+const modeDescs = {
+  1: "好きなデッキを選んで1枚引く",
+  3: "行動カード1枚 ＋ ランダム2枚",
+  6: "頂点：行動カード　中段・下段：ランダム5枚"
+};
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    drawMode = parseInt(btn.dataset.mode);
+    document.getElementById('modeDesc').textContent = modeDescs[drawMode];
+    // デッキ選択はモード1のみ有効
+    document.getElementById('deckSelector').style.opacity = drawMode===1 ? '1' : '.35';
+    document.getElementById('deckSelector').style.pointerEvents = drawMode===1 ? 'auto' : 'none';
+  });
+});
+
+document.getElementById('drawBtn').addEventListener('click', drawCards);
+document.getElementById('resetBtn').addEventListener('click', () => reset(false));
+
+function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function byType(t){ return CARDS.filter(c=>c.type===t); }
+function randFrom(arr,n){ return shuffle(arr).slice(0,n); }
+
+function drawCards(){
+  reset(true);
+  let drawn = [];
+
+  if(drawMode===1){
+    const pool = selectedDeck==='all' ? CARDS : byType(selectedDeck);
+    drawn = randFrom(pool, 1);
+    renderFlat(drawn, false);
+  } else if(drawMode===3){
+    const action = randFrom(byType('a'), 1);
+    const rest   = randFrom(shuffle(CARDS).filter(c=>c.type!=='a'), 2);
+    drawn = shuffle([...action, ...rest]);
+    renderFlat(drawn, false);
+  } else {
+    // Pyramid: 頂点=行動1, 中段=ランダム3, 下段=ランダム2
+    const top    = randFrom(byType('a'), 1);
+    const others = shuffle(CARDS.filter(c=>c.type!=='a'));
+    const mid    = others.slice(0,3);
+    const bot    = others.slice(3,5);
+    drawn = [...top,...mid,...bot];
+    renderPyramid(top, mid, bot);
+  }
+
+  document.getElementById('tapHint').classList.add('on');
+  document.getElementById('resetBtn').classList.add('on');
+}
+
+function makeCardEl(card, sm, delay){
+  const wrap = document.createElement('div');
+  wrap.className = 'card-wrapper' + (sm?' sm':'');
+  wrap.style.animationDelay = `${delay}s`;
+  wrap.innerHTML = `
+    <div class="card-inner">
+      <div class="card-face card-back">${backSVG(sm)}</div>
+      <div class="card-face card-front ${card.type}">
+        <div class="card-art">${frontSVG(card.type,sm)}</div>
+        <div class="card-sep"></div>
+        <div class="card-name">${card.name}</div>
+        <div class="card-en">${card.en}</div>
+        <div class="card-type ${card.type}">${TYPE_META[card.type].label}</div>
+      </div>
+    </div>`;
+  wrap.addEventListener('click', ()=>flipCard(wrap, card));
+  return wrap;
+}
+
+function renderFlat(cards, sm){
+  const stage = document.getElementById('stage');
+  stage.innerHTML = '';
+  cards.forEach((c,i)=> stage.appendChild(makeCardEl(c, sm, i*0.12)));
+}
+
+function renderPyramid(top, mid, bot){
+  const wrap = document.getElementById('stageWrap');
+  wrap.innerHTML = '';
+  const pyr = document.createElement('div');
+  pyr.className = 'pyramid';
+
+  const rowTop = document.createElement('div'); rowTop.className='pyr-row';
+  const rowMid = document.createElement('div'); rowMid.className='pyr-row';
+  const rowBot = document.createElement('div'); rowBot.className='pyr-row';
+
+  top.forEach((c,i) => rowTop.appendChild(makeCardEl(c, true, i*0.1)));
+  mid.forEach((c,i) => rowMid.appendChild(makeCardEl(c, true, (i+1)*0.12)));
+  bot.forEach((c,i) => rowBot.appendChild(makeCardEl(c, true, (i+4)*0.12)));
+
+  pyr.appendChild(rowTop);
+  pyr.appendChild(rowMid);
+  pyr.appendChild(rowBot);
+  wrap.appendChild(pyr);
+}
+
+function flipCard(wrap, card){
+  if(wrap.classList.contains('flipped')) return;
+  wrap.classList.add('flipped');
+
+  const panel = document.getElementById('msgPanel');
+  const meta  = TYPE_META[card.type];
+  const isAction = card.type==='a';
+
+  const el = document.createElement('div');
+  el.className='msg-card';
+  el.innerHTML=`
+    <div class="msg-head">
+      <div class="msg-dot ${card.type}"></div>
+      <div class="msg-title">${card.name} — ${card.en}</div>
+      <div class="msg-type" style="color:${meta.color}">${meta.label}</div>
+    </div>
+    <div class="msg-body ${isAction?'a-body':''}">${isAction ? card.msg : `<em>${card.msg}</em>`}</div>`;
+  panel.appendChild(el);
+  panel.classList.add('on');
+}
+
+function reset(silent){
+  const wrap = document.getElementById('stageWrap');
+  wrap.innerHTML='<div class="stage" id="stage"></div>';
+  document.getElementById('msgPanel').innerHTML='';
+  document.getElementById('msgPanel').classList.remove('on');
+  document.getElementById('tapHint').classList.remove('on');
+  if(!silent) document.getElementById('resetBtn').classList.remove('on');
+}
+</script>
+</body>
+</html>
