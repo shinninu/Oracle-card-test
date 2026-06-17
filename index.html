@@ -9,11 +9,8 @@
 :root {
   --cosmos:#060914; --gold:#D4AF5A; --gold-dim:#6A5020;
   --moss:#4A6A3A; --violet:#5A2A80; --violet-lt:#9A70C0;
-  --steel:#A0B8D0; --earth:#3A2A10;
+  --steel:#A0B8D0;
   --text:#E8E0D0; --text-dim:#706850; --text-soft:#C0B8A8;
-  --col-n0:#080E14; --col-n1:#0A1A10;
-  --col-s0:#0E1020; --col-s1:#1A2010;
-  --col-a0:#140820; --col-a1:#201010;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--cosmos);color:var(--text);font-family:'Noto Serif JP',serif;min-height:100vh;overflow-x:hidden;}
@@ -50,7 +47,7 @@ header h1{font-family:'Cinzel',serif;font-size:clamp(1.3rem,4vw,2rem);font-weigh
 .deck-btn.active-all{background:rgba(35,25,10,.6);color:var(--gold);border-bottom:2px solid var(--gold);}
 
 /* Draw mode */
-.draw-modes{display:flex;gap:.6rem;justify-content:center;margin-bottom:1.6rem;flex-wrap:wrap;}
+.draw-modes{display:flex;gap:.6rem;justify-content:center;margin-bottom:1.2rem;flex-wrap:wrap;}
 .mode-btn{background:transparent;border:1px solid var(--gold-dim);color:var(--text-dim);font-family:'Cinzel',serif;font-size:.65rem;padding:.38rem .9rem;border-radius:2px;cursor:pointer;transition:all .2s;letter-spacing:.1em;}
 .mode-btn.active,.mode-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(212,175,90,.07);}
 .mode-desc{text-align:center;font-size:.7rem;color:var(--text-dim);margin-bottom:1.4rem;font-weight:300;letter-spacing:.04em;min-height:1.2em;}
@@ -70,46 +67,87 @@ header h1{font-family:'Cinzel',serif;font-size:clamp(1.3rem,4vw,2rem);font-weigh
 
 /* Stage */
 .stage-wrap{min-height:260px;}
-
-/* Pyramid layout */
-.pyramid{display:flex;flex-direction:column;align-items:center;gap:.8rem;}
-.pyr-row{display:flex;gap:.8rem;justify-content:center;}
-
-/* Normal layout */
 .stage{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;align-items:flex-start;perspective:1400px;}
+.pyramid{display:flex;flex-direction:column;align-items:center;gap:.7rem;}
+.pyr-row{display:flex;gap:.7rem;justify-content:center;}
 
-/* Card */
-.card-wrapper{width:165px;animation:rise .55s cubic-bezier(.2,.8,.3,1) both;}
-.card-wrapper.sm{width:145px;}
+/* ── Card ── */
+.card-wrapper{width:170px;animation:rise .55s cubic-bezier(.2,.8,.3,1) both;}
+.card-wrapper.sm{width:150px;}
 @keyframes rise{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
-.card-inner{position:relative;width:165px;height:275px;transform-style:preserve-3d;transition:transform .85s cubic-bezier(.4,0,.2,1);cursor:pointer;}
-.card-wrapper.sm .card-inner{width:145px;height:242px;}
+
+.card-inner{
+  position:relative;width:170px;height:285px;
+  transform-style:preserve-3d;
+  transition:transform .85s cubic-bezier(.4,0,.2,1);
+  cursor:pointer;
+}
+.card-wrapper.sm .card-inner{width:150px;height:252px;}
 .card-wrapper.flipped .card-inner{transform:rotateY(180deg);}
-.card-face{position:absolute;inset:0;border-radius:9px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;}
+
+.card-face{position:absolute;inset:0;border-radius:10px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;}
 
 /* Card back */
-.card-back{background:linear-gradient(160deg,#0C1020 0%,#10101C 50%,#0A0E14 100%);border:1px solid rgba(212,175,90,.28);box-shadow:0 12px 50px rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;}
+.card-back{
+  background:linear-gradient(160deg,#0C1020 0%,#10101C 50%,#0A0E14 100%);
+  border:1px solid rgba(212,175,90,.28);
+  box-shadow:0 12px 50px rgba(0,0,0,.75);
+  display:flex;align-items:center;justify-content:center;
+}
 
-/* Card front */
-.card-front{transform:rotateY(180deg);border:1px solid rgba(212,175,90,.22);box-shadow:0 12px 50px rgba(0,0,0,.75);display:flex;flex-direction:column;}
-.card-front.n{background:linear-gradient(160deg,var(--col-n0) 0%,#0C2010 55%,var(--col-n1) 100%);}
-.card-front.s{background:linear-gradient(160deg,var(--col-s0) 0%,#182030 55%,var(--col-s1) 100%);}
-.card-front.a{background:linear-gradient(160deg,var(--col-a0) 0%,#1C0C28 55%,var(--col-a1) 100%);}
+/* Card front — text layout */
+.card-front{
+  transform:rotateY(180deg);
+  border:1px solid rgba(212,175,90,.22);
+  box-shadow:0 12px 50px rgba(0,0,0,.75);
+  display:flex;flex-direction:column;
+  padding:0;
+}
+.card-front.n{background:linear-gradient(160deg,#080E14 0%,#0C2010 55%,#0A1A0C 100%);}
+.card-front.s{background:linear-gradient(160deg,#0E1020 0%,#182030 55%,#101810 100%);}
+.card-front.a{background:linear-gradient(160deg,#140820 0%,#1C0C28 55%,#180810 100%);}
 
-.card-art{flex:1;display:flex;align-items:center;justify-content:center;}
-.card-sep{height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,90,.22),transparent);margin:0 .9rem;}
-.card-name{font-family:'Cinzel',serif;font-size:.62rem;color:var(--gold);text-align:center;padding:.5rem .4rem .12rem;letter-spacing:.12em;}
-.card-en{font-family:'Cinzel',serif;font-size:.48rem;color:var(--text-dim);text-align:center;letter-spacing:.14em;padding-bottom:.2rem;}
-.card-type{font-size:.58rem;text-align:center;padding:.25rem .4rem .5rem;font-weight:300;letter-spacing:.04em;border-top:1px solid rgba(212,175,90,.1);}
-.card-type.n{color:#6A9A5A;}
-.card-type.s{color:#7A9AB0;}
-.card-type.a{color:#8A70B0;}
+/* Card front top: symbol + name */
+.card-top{
+  display:flex;flex-direction:column;align-items:center;
+  padding:.7rem .5rem .4rem;
+  flex-shrink:0;
+}
+.card-geo{margin-bottom:.35rem;}
+.card-name{font-family:'Cinzel',serif;font-size:.65rem;color:var(--gold);letter-spacing:.12em;text-align:center;}
+.card-en{font-family:'Cinzel',serif;font-size:.46rem;color:var(--text-dim);letter-spacing:.14em;margin-top:.1rem;}
+
+/* Card front message */
+.card-sep{height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,90,.2),transparent);margin:0 .7rem .5rem;}
+.card-msg{
+  flex:1;overflow:hidden;
+  padding:0 .7rem .6rem;
+  display:flex;align-items:flex-start;
+}
+.card-msg p{
+  font-size:.56rem;line-height:1.75;font-weight:300;
+  color:var(--text-soft);
+  display:-webkit-box;-webkit-line-clamp:8;-webkit-box-orient:vertical;overflow:hidden;
+}
+.card-front.a .card-msg p{
+  color:#C0B0D8;font-style:normal;
+}
+
+/* カード下部タイプバッジ */
+.card-badge{
+  font-size:.52rem;text-align:center;padding:.25rem .4rem .4rem;
+  font-weight:300;letter-spacing:.06em;flex-shrink:0;
+  border-top:1px solid rgba(212,175,90,.1);
+}
+.card-badge.n{color:#6A9A5A;}
+.card-badge.s{color:#7A9AB0;}
+.card-badge.a{color:#8A70B0;}
 
 /* Tap hint */
 .tap-hint{text-align:center;font-size:.7rem;color:var(--text-dim);margin-top:.8rem;opacity:0;transition:opacity .5s;font-weight:300;letter-spacing:.06em;}
 .tap-hint.on{opacity:1;}
 
-/* Message panel */
+/* Message panel (full text on flip) */
 .msg-panel{max-width:680px;margin:2rem auto 0;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .5s .1s,transform .5s .1s;}
 .msg-panel.on{opacity:1;pointer-events:auto;transform:none;}
 .msg-card{background:rgba(8,12,30,.7);border:1px solid rgba(212,175,90,.14);border-radius:6px;padding:1.4rem 1.6rem;margin-bottom:.8rem;backdrop-filter:blur(6px);animation:rise .4s ease both;}
@@ -120,16 +158,9 @@ header h1{font-family:'Cinzel',serif;font-size:clamp(1.3rem,4vw,2rem);font-weigh
 .msg-dot.a{background:var(--violet-lt);}
 .msg-title{font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold);letter-spacing:.1em;}
 .msg-type{font-size:.6rem;color:var(--text-dim);margin-left:auto;}
-.msg-body{font-size:.88rem;line-height:2;font-weight:300;color:var(--text-soft);}
+.msg-body{font-size:.9rem;line-height:2;font-weight:300;color:var(--text-soft);}
 .msg-body em{font-style:italic;color:var(--text);font-weight:400;}
-.msg-body.a-body{
-  font-size:.9rem;line-height:2;color:var(--text);
-  padding:.9rem 1.1rem;
-  background:rgba(212,175,90,.05);
-  border-left:2px solid var(--gold);
-  border-radius:0 4px 4px 0;
-  margin-top:.3rem;
-}
+.msg-body.a-body{color:var(--text);padding:.9rem 1.1rem;background:rgba(212,175,90,.05);border-left:2px solid var(--gold);border-radius:0 4px 4px 0;}
 
 /* Reset */
 .reset-btn{display:none;margin:1.5rem auto 0;background:transparent;border:1px solid var(--gold-dim);color:var(--text-dim);font-family:'Noto Serif JP',serif;font-size:.75rem;padding:.45rem 1.6rem;border-radius:2px;cursor:pointer;transition:all .2s;letter-spacing:.1em;}
@@ -165,7 +196,6 @@ footer code{font-family:monospace;color:var(--gold-dim);}
 
 <div class="divider"><div class="div-line l"></div><div class="div-diamond"></div><div class="div-line r"></div></div>
 
-<!-- Deck selector (1枚引き時のみ有効) -->
 <div class="deck-selector" id="deckSelector">
   <button class="deck-btn active-n" data-deck="n">&#x1F33F; 自然</button>
   <button class="deck-btn" data-deck="s">&#x1F3DB; 構造</button>
@@ -173,13 +203,12 @@ footer code{font-family:monospace;color:var(--gold-dim);}
   <button class="deck-btn" data-deck="all">&#x2606; すべて</button>
 </div>
 
-<!-- Draw mode -->
 <div class="draw-modes">
   <button class="mode-btn active" data-mode="1">I　1枚</button>
   <button class="mode-btn" data-mode="3">III　3枚</button>
   <button class="mode-btn" data-mode="6">VI　ピラミッド</button>
 </div>
-<p class="mode-desc" id="modeDesc">好きなデッキを選んで引く</p>
+<p class="mode-desc" id="modeDesc">好きなデッキを選んで1枚引く</p>
 
 <button class="draw-btn" id="drawBtn">カードを引く</button>
 
@@ -191,16 +220,11 @@ footer code{font-family:monospace;color:var(--gold-dim);}
 <button class="reset-btn" id="resetBtn">もう一度引く</button>
 
 <footer>
-  <p><code>CARDS</code> 配列を編集してカスタマイズできます &nbsp;|&nbsp; Two Worlds Oracle &middot; Private Edition</p>
+  <p><code>CARDS</code> 配列を編集してカスタマイズ &nbsp;|&nbsp; Two Worlds Oracle &middot; Private Edition</p>
 </footer>
 </div>
 
 <script>
-/* =============================================================
-   CARDS
-   type: "n"=自然  "s"=構造  "a"=行動
-   msg: 自然→宇宙・自然の視点 / 構造→社会・人間の視点 / 行動→動くための言葉
-============================================================= */
 const CARDS = [
   /* 🌿 自然 */
   {type:"n",name:"光",en:"LIGHT",
@@ -229,7 +253,6 @@ const CARDS = [
    msg:"砕けたものは失われたのではない。全体だったものが、より小さな真実になって散らばっている。断片の一つひとつに、元の形の記憶が宿っている。"},
   {type:"n",name:"実像",en:"REAL IMAGE",
    msg:"鏡に映る像は左右が逆だ。他者の目に映る自分も、完全ではない。肉体を持ち、この地を踏んで立っている存在——それだけが、誰にも歪められない本当のあなただ。"},
-
   /* 🏛 構造 */
   {type:"s",name:"役割",en:"ROLE",
    msg:"社会は役割の網の目でできている。誰もが何かを担い、誰かの担いに乗っかって生きている。役割はあなたを縛るラベルではなく、今この場所で力を発揮するための形だ。"},
@@ -253,7 +276,6 @@ const CARDS = [
    msg:"縮小を失敗と呼ぶのは、拡大だけを成長と見ているからだ。木は冬に縮む。会社も、国も、人も、縮む時期がある。縮小は集中だ。力を一点に絞る、意図的な選択でもある。"},
   {type:"s",name:"物語",en:"STORY",
    msg:"人間は唯一、物語によって見知らぬ他者と協力できる動物だ。国家も宗教も貨幣も、共有された物語だ。あなたが信じている物語が、あなたの見る世界の形を決めている。"},
-
   /* ⚡ 行動 */
   {type:"a",name:"選択",en:"CHOICE",
    msg:"迷っていることを紙に書き出す。「どちらでもいい」と一度声に出してから、直感で選ぶ。選んだ後は振り返らない。どの道を選ぶかより、選んだ道をどう歩くかが人生を作る。"},
@@ -283,20 +305,20 @@ const CARDS = [
    msg:"今日の、何でもない一つの行動を、いつもより丁寧にやる。食事でも、歩くことでも、人と話すことでも。日常はケの世界だ。その積み重ねが、人生のほとんどを作っている。"},
 ];
 
-const TYPE_META = {
-  n:{label:"自然", color:"#80B070"},
-  s:{label:"構造", color:"#A0B8D0"},
-  a:{label:"行動", color:"#9A70C0"},
+const TYPE_META={
+  n:{label:"自然",color:"#80B070"},
+  s:{label:"構造",color:"#A0B8D0"},
+  a:{label:"行動",color:"#9A70C0"},
 };
 
-/* SVGs */
+/* ── SVG ── */
 function backSVG(sm){
-  const s=sm?90:105;
+  const s=sm?85:100;
   return`<svg viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}">
     <circle cx="55" cy="55" r="50" fill="none" stroke="#D4AF5A" stroke-width=".6" opacity=".28"/>
     <circle cx="55" cy="55" r="34" fill="none" stroke="#5A2A80" stroke-width=".5" opacity=".38"/>
     <circle cx="55" cy="55" r="19" fill="none" stroke="#D4AF5A" stroke-width=".45" opacity=".28"/>
-    <polygon points="55,8 95,72 15,72" fill="none" stroke="#D4AF5A" stroke-width=".7" opacity=".52"/>
+    <polygon points="55,8 95,72 15,72"  fill="none" stroke="#D4AF5A" stroke-width=".7" opacity=".52"/>
     <polygon points="55,100 15,36 95,36" fill="none" stroke="#4A6A3A" stroke-width=".7" opacity=".48"/>
     <circle cx="55" cy="8"   r="1.4" fill="#D4AF5A" opacity=".65"/>
     <circle cx="95" cy="72"  r="1.4" fill="#D4AF5A" opacity=".65"/>
@@ -311,177 +333,195 @@ function backSVG(sm){
   </svg>`;
 }
 
-function frontSVG(type, sm){
-  const s=sm?60:68;
+function frontSVG(type,sm){
+  const s=sm?44:52;
   if(type==="n") return`<svg viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}">
-    <circle cx="36" cy="36" r="30" fill="none" stroke="#4A6A3A" stroke-width=".6" opacity=".42"/>
-    <circle cx="36" cy="36" r="18" fill="none" stroke="#80B070" stroke-width=".5" opacity=".42"/>
-    <circle cx="36" cy="36" r="9"  fill="none" stroke="#D4AF5A" stroke-width=".42" opacity=".38"/>
-    <circle cx="36" cy="18"  r="9" fill="none" stroke="#4A6A3A" stroke-width=".42" opacity=".32"/>
-    <circle cx="53.6" cy="27" r="9" fill="none" stroke="#4A6A3A" stroke-width=".42" opacity=".32"/>
-    <circle cx="53.6" cy="45" r="9" fill="none" stroke="#4A6A3A" stroke-width=".42" opacity=".32"/>
-    <circle cx="36" cy="54"  r="9" fill="none" stroke="#4A6A3A" stroke-width=".42" opacity=".32"/>
-    <circle cx="18.4" cy="45" r="9" fill="none" stroke="#4A6A3A" stroke-width=".42" opacity=".32"/>
-    <circle cx="18.4" cy="27" r="9" fill="none" stroke="#4A6A3A" stroke-width=".42" opacity=".32"/>
+    <circle cx="36" cy="36" r="30" fill="none" stroke="#4A6A3A" stroke-width=".7" opacity=".42"/>
+    <circle cx="36" cy="36" r="18" fill="none" stroke="#80B070" stroke-width=".6" opacity=".42"/>
+    <circle cx="36" cy="36" r="9"  fill="none" stroke="#D4AF5A" stroke-width=".5" opacity=".38"/>
+    <circle cx="36"   cy="18"   r="9" fill="none" stroke="#4A6A3A" stroke-width=".5" opacity=".32"/>
+    <circle cx="53.6" cy="27"   r="9" fill="none" stroke="#4A6A3A" stroke-width=".5" opacity=".32"/>
+    <circle cx="53.6" cy="45"   r="9" fill="none" stroke="#4A6A3A" stroke-width=".5" opacity=".32"/>
+    <circle cx="36"   cy="54"   r="9" fill="none" stroke="#4A6A3A" stroke-width=".5" opacity=".32"/>
+    <circle cx="18.4" cy="45"   r="9" fill="none" stroke="#4A6A3A" stroke-width=".5" opacity=".32"/>
+    <circle cx="18.4" cy="27"   r="9" fill="none" stroke="#4A6A3A" stroke-width=".5" opacity=".32"/>
     <circle cx="36" cy="36" r="2" fill="#80B070" opacity=".82"/>
   </svg>`;
   if(type==="s") return`<svg viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}">
-    <rect x="8"  y="8"  width="56" height="56" fill="none" stroke="#A0B8D0" stroke-width=".6" opacity=".42"/>
-    <rect x="18" y="18" width="36" height="36" fill="none" stroke="#D4AF5A" stroke-width=".52" opacity=".38" transform="rotate(45 36 36)"/>
-    <rect x="24" y="24" width="24" height="24" fill="none" stroke="#A0B8D0" stroke-width=".48" opacity=".32"/>
+    <rect x="8"  y="8"  width="56" height="56" fill="none" stroke="#A0B8D0" stroke-width=".7" opacity=".42"/>
+    <rect x="18" y="18" width="36" height="36" fill="none" stroke="#D4AF5A" stroke-width=".6" opacity=".38" transform="rotate(45 36 36)"/>
+    <rect x="24" y="24" width="24" height="24" fill="none" stroke="#A0B8D0" stroke-width=".55" opacity=".32"/>
     <line x1="8"  y1="8"  x2="64" y2="64" stroke="#A0B8D0" stroke-width=".3" opacity=".16"/>
     <line x1="64" y1="8"  x2="8"  y2="64" stroke="#A0B8D0" stroke-width=".3" opacity=".16"/>
-    <circle cx="36" cy="36" r="4"   fill="none" stroke="#D4AF5A" stroke-width=".55" opacity=".58"/>
+    <circle cx="36" cy="36" r="4"   fill="none" stroke="#D4AF5A" stroke-width=".6" opacity=".58"/>
     <circle cx="36" cy="36" r="1.5" fill="#D4AF5A" opacity=".82"/>
   </svg>`;
   return`<svg viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}">
-    <circle cx="36" cy="36" r="30" fill="none" stroke="#5A2A80" stroke-width=".5" opacity=".32"/>
-    <polygon points="36,7 62,52 10,52"  fill="none" stroke="#D4AF5A"   stroke-width=".7" opacity=".58"/>
-    <polygon points="36,65 10,20 62,20" fill="none" stroke="#9A70C0" stroke-width=".7" opacity=".52"/>
-    <circle cx="36" cy="36" r="10" fill="none" stroke="#D4AF5A" stroke-width=".42" opacity=".32"/>
-    <circle cx="36" cy="36" r="4"  fill="none" stroke="#9A70C0" stroke-width=".52" opacity=".48"/>
+    <circle cx="36" cy="36" r="30" fill="none" stroke="#5A2A80" stroke-width=".6" opacity=".32"/>
+    <polygon points="36,7 62,52 10,52"  fill="none" stroke="#D4AF5A" stroke-width=".8" opacity=".58"/>
+    <polygon points="36,65 10,20 62,20" fill="none" stroke="#9A70C0" stroke-width=".8" opacity=".52"/>
+    <circle cx="36" cy="36" r="10" fill="none" stroke="#D4AF5A" stroke-width=".5" opacity=".32"/>
+    <circle cx="36" cy="36" r="4"  fill="none" stroke="#9A70C0" stroke-width=".55" opacity=".48"/>
     <circle cx="36" cy="36" r="2"  fill="#D4AF5A" opacity=".88"/>
   </svg>`;
 }
 
-/* State */
-let selectedDeck = "n";
-let drawMode = 1;
+/* ── State ── */
+let selectedDeck="n", drawMode=1;
 
-/* Deck buttons */
-document.querySelectorAll('.deck-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.deck-btn').forEach(b => b.className='deck-btn');
+document.querySelectorAll('.deck-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.deck-btn').forEach(b=>b.className='deck-btn');
     btn.classList.add('active-'+btn.dataset.deck);
-    selectedDeck = btn.dataset.deck;
+    selectedDeck=btn.dataset.deck;
   });
 });
 
-/* Mode buttons */
-const modeDescs = {
-  1: "好きなデッキを選んで1枚引く",
-  3: "行動カード1枚 ＋ ランダム2枚",
-  6: "頂点：行動カード　中段・下段：ランダム5枚"
+const modeDescs={
+  1:"好きなデッキを選んで1枚引く",
+  3:"行動カード1枚 ＋ ランダム2枚",
+  6:"上段3枚・中段2枚・下段：行動カード"
 };
-document.querySelectorAll('.mode-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+document.querySelectorAll('.mode-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
-    drawMode = parseInt(btn.dataset.mode);
-    document.getElementById('modeDesc').textContent = modeDescs[drawMode];
-    // デッキ選択はモード1のみ有効
-    document.getElementById('deckSelector').style.opacity = drawMode===1 ? '1' : '.35';
-    document.getElementById('deckSelector').style.pointerEvents = drawMode===1 ? 'auto' : 'none';
+    drawMode=parseInt(btn.dataset.mode);
+    document.getElementById('modeDesc').textContent=modeDescs[drawMode];
+    const ds=document.getElementById('deckSelector');
+    ds.style.opacity=drawMode===1?'1':'.35';
+    ds.style.pointerEvents=drawMode===1?'auto':'none';
   });
 });
 
-document.getElementById('drawBtn').addEventListener('click', drawCards);
-document.getElementById('resetBtn').addEventListener('click', () => reset(false));
+document.getElementById('drawBtn').addEventListener('click',drawCards);
+document.getElementById('resetBtn').addEventListener('click',()=>reset(false));
 
-function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
-function byType(t){ return CARDS.filter(c=>c.type===t); }
-function randFrom(arr,n){ return shuffle(arr).slice(0,n); }
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function byType(t){return CARDS.filter(c=>c.type===t);}
+function randFrom(arr,n){return shuffle(arr).slice(0,n);}
 
+/* ── カード要素生成 ── */
+function makeCard(card, sm, delay){
+  const wrap=document.createElement('div');
+  wrap.className='card-wrapper'+(sm?' sm':'');
+  wrap.style.animationDelay=`${delay}s`;
+  const meta=TYPE_META[card.type];
+  wrap.innerHTML=`
+    <div class="card-inner">
+      <div class="card-face card-back">${backSVG(sm)}</div>
+      <div class="card-face card-front ${card.type}">
+        <div class="card-top">
+          <div class="card-geo">${frontSVG(card.type,sm)}</div>
+          <div class="card-name">${card.name}</div>
+          <div class="card-en">${card.en}</div>
+        </div>
+        <div class="card-sep"></div>
+        <div class="card-msg"><p>${card.msg}</p></div>
+        <div class="card-badge ${card.type}">${meta.label}</div>
+      </div>
+    </div>`;
+  wrap.addEventListener('click',()=>flipCard(wrap,card));
+  return wrap;
+}
+
+/* ── フリップ：行動カードは最後に表示 ── */
+function flipCard(wrap, card){
+  if(wrap.classList.contains('flipped')) return;
+
+  const panel=document.getElementById('msgPanel');
+  const isAction=card.type==='a';
+
+  const doFlip=()=>{
+    wrap.classList.add('flipped');
+    const el=document.createElement('div');
+    el.className='msg-card';
+    const meta=TYPE_META[card.type];
+    el.innerHTML=`
+      <div class="msg-head">
+        <div class="msg-dot ${card.type}"></div>
+        <div class="msg-title">${card.name} — ${card.en}</div>
+        <div class="msg-type" style="color:${meta.color}">${meta.label}</div>
+      </div>
+      <div class="msg-body ${isAction?'a-body':''}">${card.msg}</div>`;
+    panel.appendChild(el);
+    panel.classList.add('on');
+  };
+
+  if(isAction){
+    // 行動カードは他のカードが全てフリップされてから
+    const allCards=document.querySelectorAll('.card-wrapper');
+    const nonActionPending=[...allCards].filter(w=>{
+      const inner=w.querySelector('.card-front');
+      return inner && inner.classList.contains('a')===false && !w.classList.contains('flipped');
+    });
+    if(nonActionPending.length > 0){
+      // まだ自然・構造カードが残っている — 少し待ってから実行
+      setTimeout(doFlip, 200);
+    } else {
+      doFlip();
+    }
+  } else {
+    doFlip();
+  }
+}
+
+/* ── Draw ── */
 function drawCards(){
   reset(true);
-  let drawn = [];
 
   if(drawMode===1){
-    const pool = selectedDeck==='all' ? CARDS : byType(selectedDeck);
-    drawn = randFrom(pool, 1);
-    renderFlat(drawn, false);
+    const pool=selectedDeck==='all'?CARDS:byType(selectedDeck);
+    renderFlat(randFrom(pool,1),false);
   } else if(drawMode===3){
-    const action = randFrom(byType('a'), 1);
-    const rest   = randFrom(shuffle(CARDS).filter(c=>c.type!=='a'), 2);
-    drawn = shuffle([...action, ...rest]);
-    renderFlat(drawn, false);
+    const action=randFrom(byType('a'),1);
+    const rest=randFrom(CARDS.filter(c=>c.type!=='a'),2);
+    // 行動カードを最後に配置
+    renderFlat([...shuffle(rest), ...action],false);
   } else {
-    // Pyramid: 頂点=行動1, 中段=ランダム3, 下段=ランダム2
-    const top    = randFrom(byType('a'), 1);
-    const others = shuffle(CARDS.filter(c=>c.type!=='a'));
-    const mid    = others.slice(0,3);
-    const bot    = others.slice(3,5);
-    drawn = [...top,...mid,...bot];
-    renderPyramid(top, mid, bot);
+    // ピラミッド：上3・中2・下1(行動)
+    const action=randFrom(byType('a'),1);
+    const others=shuffle(CARDS.filter(c=>c.type!=='a'));
+    renderPyramid(others.slice(0,3), others.slice(3,5), action);
   }
 
   document.getElementById('tapHint').classList.add('on');
   document.getElementById('resetBtn').classList.add('on');
 }
 
-function makeCardEl(card, sm, delay){
-  const wrap = document.createElement('div');
-  wrap.className = 'card-wrapper' + (sm?' sm':'');
-  wrap.style.animationDelay = `${delay}s`;
-  wrap.innerHTML = `
-    <div class="card-inner">
-      <div class="card-face card-back">${backSVG(sm)}</div>
-      <div class="card-face card-front ${card.type}">
-        <div class="card-art">${frontSVG(card.type,sm)}</div>
-        <div class="card-sep"></div>
-        <div class="card-name">${card.name}</div>
-        <div class="card-en">${card.en}</div>
-        <div class="card-type ${card.type}">${TYPE_META[card.type].label}</div>
-      </div>
-    </div>`;
-  wrap.addEventListener('click', ()=>flipCard(wrap, card));
-  return wrap;
+function renderFlat(cards,sm){
+  const stage=document.getElementById('stage');
+  stage.innerHTML='';
+  cards.forEach((c,i)=>stage.appendChild(makeCard(c,sm,i*0.12)));
 }
 
-function renderFlat(cards, sm){
-  const stage = document.getElementById('stage');
-  stage.innerHTML = '';
-  cards.forEach((c,i)=> stage.appendChild(makeCardEl(c, sm, i*0.12)));
-}
+function renderPyramid(top3, mid2, bot1){
+  const wrap=document.getElementById('stageWrap');
+  wrap.innerHTML='';
+  const pyr=document.createElement('div');
+  pyr.className='pyramid';
 
-function renderPyramid(top, mid, bot){
-  const wrap = document.getElementById('stageWrap');
-  wrap.innerHTML = '';
-  const pyr = document.createElement('div');
-  pyr.className = 'pyramid';
+  const rTop=document.createElement('div');rTop.className='pyr-row';
+  const rMid=document.createElement('div');rMid.className='pyr-row';
+  const rBot=document.createElement('div');rBot.className='pyr-row';
 
-  const rowTop = document.createElement('div'); rowTop.className='pyr-row';
-  const rowMid = document.createElement('div'); rowMid.className='pyr-row';
-  const rowBot = document.createElement('div'); rowBot.className='pyr-row';
+  top3.forEach((c,i)=>rTop.appendChild(makeCard(c,true,i*0.1)));
+  mid2.forEach((c,i)=>rMid.appendChild(makeCard(c,true,(i+3)*0.1)));
+  bot1.forEach((c,i)=>rBot.appendChild(makeCard(c,true,(i+5)*0.1)));
 
-  top.forEach((c,i) => rowTop.appendChild(makeCardEl(c, true, i*0.1)));
-  mid.forEach((c,i) => rowMid.appendChild(makeCardEl(c, true, (i+1)*0.12)));
-  bot.forEach((c,i) => rowBot.appendChild(makeCardEl(c, true, (i+4)*0.12)));
-
-  pyr.appendChild(rowTop);
-  pyr.appendChild(rowMid);
-  pyr.appendChild(rowBot);
+  pyr.appendChild(rTop);
+  pyr.appendChild(rMid);
+  pyr.appendChild(rBot);
   wrap.appendChild(pyr);
 }
 
-function flipCard(wrap, card){
-  if(wrap.classList.contains('flipped')) return;
-  wrap.classList.add('flipped');
-
-  const panel = document.getElementById('msgPanel');
-  const meta  = TYPE_META[card.type];
-  const isAction = card.type==='a';
-
-  const el = document.createElement('div');
-  el.className='msg-card';
-  el.innerHTML=`
-    <div class="msg-head">
-      <div class="msg-dot ${card.type}"></div>
-      <div class="msg-title">${card.name} — ${card.en}</div>
-      <div class="msg-type" style="color:${meta.color}">${meta.label}</div>
-    </div>
-    <div class="msg-body ${isAction?'a-body':''}">${isAction ? card.msg : `<em>${card.msg}</em>`}</div>`;
-  panel.appendChild(el);
-  panel.classList.add('on');
-}
-
 function reset(silent){
-  const wrap = document.getElementById('stageWrap');
+  const wrap=document.getElementById('stageWrap');
   wrap.innerHTML='<div class="stage" id="stage"></div>';
   document.getElementById('msgPanel').innerHTML='';
   document.getElementById('msgPanel').classList.remove('on');
   document.getElementById('tapHint').classList.remove('on');
-  if(!silent) document.getElementById('resetBtn').classList.remove('on');
+  if(!silent)document.getElementById('resetBtn').classList.remove('on');
 }
 </script>
 </body>
